@@ -1,12 +1,8 @@
-name: CI
+name: Scheduled Tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  schedule:
+    - cron: '0 0 * * *'  # Runs every day at midnight UTC
 
 jobs:
   backend:
