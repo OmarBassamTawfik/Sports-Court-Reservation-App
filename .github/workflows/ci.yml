@@ -43,6 +43,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          # Remove Windows-specific dependencies
+          sed -i '/pywin32/d' Back_End/myproject/requirements.txt
           pip install -r Back_End/myproject/requirements.txt
 
       - name: Run migrations
