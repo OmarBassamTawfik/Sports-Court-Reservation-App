@@ -3,6 +3,12 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import make_password, check_password
 from base.models import User, Court
 from .serializers import UserSerializer, CourtSerializer
+import stripe
+from django.conf import settings
+from rest_framework.views import APIView
+from rest_framework.decorators import action
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class CourtViewSet(viewsets.ModelViewSet):
     queryset = Court.objects.all()
@@ -12,16 +18,28 @@ class CourtViewSet(viewsets.ModelViewSet):
         username = request.data.get('username')
         sport = request.data.get('sport')
         num = request.data.get('num')
+        token = request.data.get('token')
+        amount = request.data.get('amount')
 
         try:
             user = User.objects.get(username=username)
             if user.is_manager:
+                # Process payment
+                charge = stripe.Charge.create(
+                    amount=int(amount * 100),  # Amount in cents
+                    currency='usd',
+                    source=token,
+                    description='Court Reservation Payment'
+                )
+
                 court = Court.objects.create(user=user, sport=sport, num=num)
-                return Response({'message': 'Court created successfully', 'court_id': court.id}, status=status.HTTP_201_CREATED)
+                return Response({'message': 'Court created successfully', 'court_id': court.id, 'charge_id': charge.id}, status=status.HTTP_201_CREATED)
             else:
                 return Response({'error': 'Only managers can create courts'}, status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
             return Response({'error': 'Invalid username'}, status=status.HTTP_401_UNAUTHORIZED)
+        except stripe.error.StripeError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class SignupView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -117,3 +135,21 @@ class ManagerUserView(generics.ListAPIView):
                 return Response({'error': 'Only managers can view all users'}, status=status.HTTP_403_FORBIDDEN)
         except User.DoesNotExist:
             return Response({'error': 'Invalid username'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class PaymentView(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            amount = request.data.get('amount')
+            currency = request.data.get('currency', 'usd')
+            token = request.data.get('token')
+
+            charge = stripe.Charge.create(
+                amount=int(amount * 100),  # Amount in cents
+                currency=currency,
+                source=token,
+                description='Court Reservation Payment'
+            )
+
+            return Response({'message': 'Payment successful', 'charge_id': charge.id}, status=status.HTTP_200_OK)
+        except stripe.error.StripeError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
