@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
   void _handleLogin() async {
     // Add your login logic here
     await _saveCredentials(); // Save credentials if "Remember Me" is checked
-    Navigator.pushNamed(context, '/dashboard');
+    // Navigator.pushNamed(context, '/dashboard');
   }
 
   @override
