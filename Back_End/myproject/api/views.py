@@ -144,7 +144,7 @@ class PaymentView(APIView):
             token = request.data.get('token')
 
             charge = stripe.Charge.create(
-                amount=int(amount * 100),  # Amount in cents
+                amount=int(amount * 100),  
                 currency=currency,
                 source=token,
                 description='Court Reservation Payment'

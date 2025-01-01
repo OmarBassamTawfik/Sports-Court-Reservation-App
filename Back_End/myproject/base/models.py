@@ -6,7 +6,7 @@ class User(models.Model):
     is_manager = models.BooleanField(default=False)
 
     class Meta:
-        db_table = 'users'  # Match the existing table name
+        db_table = 'users'  
 
     def __str__(self):
         return self.username
@@ -18,7 +18,7 @@ class Court(models.Model):
     num = models.IntegerField(null=False)
 
     class Meta:
-        db_table = 'courts'  # Match the existing table name
+        db_table = 'courts'  
 
     def __str__(self):
         return f"{self.sport} Court {self.num}"
