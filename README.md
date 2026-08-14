@@ -46,11 +46,3 @@ python app.py
 ├── ios/            # iOS build files
 └── README.md       # This file
 ```
-
-## License
-
-[Add your license here]
-
-## Contact
-
-Maintainer: [OmarBassamTawfik](https://github.com/OmarBassamTawfik)
