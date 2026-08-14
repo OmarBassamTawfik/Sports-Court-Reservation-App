@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sports_court_reservation_system/booking_confirmed.dart';
+import 'package:sports_court_reservation_system/signup_page.dart';
 import 'landing_page.dart';
 import 'login_page.dart';
 import 'booking_page.dart';
@@ -18,13 +20,12 @@ class SportsCourtApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LandingPage(),
-        '/login': (context) => LoginPage(),
-        '/signup': (context) => const Scaffold(
-            body: Center(child: Text("Signup Page"))), // Placeholder
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignUpPage(), // Placeholder
         '/booking': (context) => BookingPage(),
         '/dashboard': (context) => AdminDashboard(),
-        '/confirmation': (context) => const Scaffold(
-            body: Center(child: Text("Booking Confirmed"))), // Placeholder
+        '/confirmation': (context) =>
+            const BookingConfirmedPage(), // Placeholder
       },
     );
   }
